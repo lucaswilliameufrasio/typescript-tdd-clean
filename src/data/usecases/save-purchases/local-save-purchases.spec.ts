@@ -1,6 +1,7 @@
 import { ICacheStore } from "@/data/protocols/cache";
 import { LocalSavePurchases } from "@/data/usecases";
 import { SavePurchases } from "@/domain";
+import { prototype } from "module";
 
 class CacheStoreSpy implements ICacheStore {
   deleteCallsCount = 0;
@@ -19,6 +20,13 @@ class CacheStoreSpy implements ICacheStore {
     this.insertKey = key;
     this.insertValues = value;
   }
+
+  simulateDeleteError(): void {
+    jest.spyOn(CacheStoreSpy.prototype, "delete").mockImplementationOnce(() => {
+      throw new Error();
+    });
+
+  } 
 }
 
 const mockPurchases = (): Array<SavePurchases.Params> => [
@@ -69,9 +77,7 @@ describe("LocalSavePurchases", () => {
   test("Should not insert new cache if delete fails", () => {
     const { sut, cacheStore } = makeSut();
 
-    jest.spyOn(cacheStore, "delete").mockImplementationOnce(() => {
-      throw new Error();
-    });
+    cacheStore.simulateDeleteError()
 
     const promise = sut.save(mockPurchases());
 
