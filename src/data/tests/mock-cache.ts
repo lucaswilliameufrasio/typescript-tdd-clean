@@ -5,7 +5,13 @@ export class CacheStoreSpy implements ICacheStore {
   actions: Array<CacheStoreSpy.Action> = [];
   deleteKey: string;
   insertKey: string;
+  fetchKey: string;
   insertValues: Array<SavePurchases.Params> = [];
+
+  fetch(key): void {
+    this.actions.push(CacheStoreSpy.Action.fetch);
+    this.fetchKey = key;
+  }
 
   delete(key): void {
     this.actions.push(CacheStoreSpy.Action.delete);
@@ -38,5 +44,6 @@ export namespace CacheStoreSpy {
   export enum Action {
     delete,
     insert,
+    fetch,
   }
 }
