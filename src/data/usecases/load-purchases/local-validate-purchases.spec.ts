@@ -1,5 +1,9 @@
 import { LocalLoadPurchases } from "@/data/usecases";
-import { CacheStoreSpy, mockPurchases, getCacheExpirationDate } from "@/data/tests";
+import {
+  CacheStoreSpy,
+  mockPurchases,
+  getCacheExpirationDate,
+} from "@/data/tests";
 
 type SutTypes = {
   sut: LocalLoadPurchases;
@@ -23,8 +27,7 @@ describe("LocalLoadPurchases", () => {
 
     expect(cacheStore.actions).toEqual([]);
   });
-  
-  
+
   test("Should delete cache if load fails", () => {
     const { sut, cacheStore } = makeSut();
 
@@ -36,5 +39,18 @@ describe("LocalLoadPurchases", () => {
       CacheStoreSpy.Action.delete,
     ]);
     expect(cacheStore.deleteKey).toBe("purchases");
+  });
+
+  test("Should has no side effect if load succeeds", () => {
+    const currentDate = new Date();
+    const timestamp = getCacheExpirationDate(currentDate);
+    timestamp.setSeconds(timestamp.getSeconds() + 1);
+    const { sut, cacheStore } = makeSut(currentDate);
+
+    cacheStore.fetchResult = { timestamp };
+    sut.validate();
+
+    expect(cacheStore.actions).toEqual([CacheStoreSpy.Action.fetch]);
+    expect(cacheStore.fetchKey).toBe("purchases");
   });
 });
