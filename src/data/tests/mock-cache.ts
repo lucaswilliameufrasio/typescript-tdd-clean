@@ -1,5 +1,5 @@
 import { ICacheStore } from "../protocols/cache";
-import { SavePurchases } from "@/domain/usecases";
+import { SavePurchases, LoadPurchases } from "@/domain/usecases";
 
 export class CacheStoreSpy implements ICacheStore {
   actions: Array<CacheStoreSpy.Action> = [];
@@ -7,10 +7,13 @@ export class CacheStoreSpy implements ICacheStore {
   insertKey: string;
   fetchKey: string;
   insertValues: Array<SavePurchases.Params> = [];
+  fetchResult: any;
 
-  fetch(key): void {
+  fetch(key): any {
     this.actions.push(CacheStoreSpy.Action.fetch);
     this.fetchKey = key;
+
+    return this.fetchResult;
   }
 
   delete(key): void {
