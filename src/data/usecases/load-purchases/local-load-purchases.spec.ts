@@ -1,5 +1,9 @@
 import { LocalLoadPurchases } from "@/data/usecases";
-import { CacheStoreSpy, mockPurchases, getCacheExpirationDate } from "@/data/tests";
+import {
+  CacheStoreSpy,
+  mockPurchases,
+  getCacheExpirationDate,
+} from "@/data/tests";
 
 type SutTypes = {
   sut: LocalLoadPurchases;
@@ -30,11 +34,7 @@ describe("LocalLoadPurchases", () => {
     cacheStore.simulateFetchError();
     const purchases = await sut.loadAll();
 
-    expect(cacheStore.actions).toEqual([
-      CacheStoreSpy.Action.fetch,
-      CacheStoreSpy.Action.delete,
-    ]);
-    expect(cacheStore.deleteKey).toBe("purchases");
+    expect(cacheStore.actions).toEqual([CacheStoreSpy.Action.fetch]);
     expect(purchases).toEqual([]);
   });
 
